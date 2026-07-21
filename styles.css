@@ -1,0 +1,108 @@
+/* ==============================
+           SECCIÓN DE RESERVAS / FORMULARIO
+        ============================== */
+        .reservation-section {
+            padding: 100px 5%;
+            background-color: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+        }
+
+        .reservation-container {
+            background-color: var(--bg-card);
+            padding: 50px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .reservation-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .reservation-header h2 {
+            color: var(--accent-gold);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .reservation-header p {
+            color: var(--text-muted);
+        }
+
+        .reservation-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            background-color: #0a0a0a;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 14px;
+            border-radius: 4px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Cambiar el ícono del calendario en modo oscuro */
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .form-submit-btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .form-success-message {
+            display: none;
+            background-color: rgba(37, 211, 102, 0.1);
+            border-left: 4px solid #25D366;
+            color: #25D366;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            border-radius: 4px;
+            font-weight: 600;
+        }
