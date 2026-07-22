@@ -38,7 +38,7 @@
             opacity: 0; 
             transform: translateY(30px); 
             transition: opacity 0.6s ease-out, transform 0.6s ease-out; 
-            will-change: opacity, transform; /* Aceleración por Hardware */
+            will-change: opacity, transform;
         }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
@@ -54,12 +54,10 @@
 
         .logo { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--accent-gold); letter-spacing: 2px; cursor: pointer; z-index: 1001; }
 
-        /* Menú Desktop */
         nav { display: flex; align-items: center; gap: 20px; }
         nav a { font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted); transition: 0.3s; }
         nav a:hover { color: var(--accent-gold); }
 
-        /* Menú Hamburguesa (Oculto en Desktop) */
         .menu-toggle {
             display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001;
         }
@@ -79,6 +77,17 @@
         
         .btn-secondary { background-color: transparent; color: var(--text-main); border-color: var(--text-muted); }
         .btn-secondary:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+        /* Botones de acción pequeños para tablas */
+        .btn-small {
+            padding: 6px 12px; font-size: 0.75rem; border-radius: 4px; 
+            border: 1px solid var(--accent-gold); background: transparent; 
+            color: var(--accent-gold); cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; font-weight: 600;
+        }
+        .btn-small:hover { background: var(--accent-gold); color: var(--bg-dark); }
+        .btn-small.danger { border-color: #ff4d4d; color: #ff4d4d; }
+        .btn-small.danger:hover { background: #ff4d4d; color: white; }
 
         /* ==============================
            SECCIONES DE LA PÁGINA
@@ -113,19 +122,17 @@
         .reservation-container { background-color: var(--bg-card); padding: 40px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); max-width: 700px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
         .form-row { display: flex; gap: 20px; flex-wrap: wrap; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 20px; flex: 1; min-width: 250px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 20px; flex: 1; min-width: 250px; text-align: left; }
         .form-group label { font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
         
         .form-group input, .form-group select, .form-group textarea {
             background-color: #0a0a0a; border: 1px solid rgba(255,255,255,0.1); padding: 14px; 
             border-radius: 4px; color: var(--text-main); font-family: 'Inter', sans-serif; width: 100%;
-            font-size: 16px; /* Evita zoom en iOS */
-            appearance: none;
+            font-size: 16px; appearance: none;
         }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent-gold); outline: none; }
         ::-webkit-calendar-picker-indicator { filter: invert(1); }
 
-        /* FOOTER Y WHATSAPP */
         footer { background-color: #050505; padding: 60px 5%; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
         footer p { color: var(--text-muted); font-size: 0.9rem; margin: 5px 0; }
         
@@ -137,23 +144,41 @@
         .whatsapp-float:hover { transform: scale(1.1) rotate(5deg); }
 
         /* ==============================
-           SISTEMA DE PORTAL Y MODAL
+           SISTEMA DE PORTAL Y MODALES
         ============================== */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        .login-box { background: var(--bg-card); padding: 40px 30px; border-radius: 8px; width: 100%; max-width: 400px; border: 1px solid var(--accent-gold); text-align: center; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; overflow-y: auto; }
+        .login-box { background: var(--bg-card); padding: 40px 30px; border-radius: 8px; width: 100%; max-width: 400px; border: 1px solid var(--accent-gold); text-align: center; margin: auto; }
+        .crud-modal-box { max-width: 500px; }
         .login-box h2 { color: var(--accent-gold); margin-bottom: 15px; }
         
         #dashboard-view { display: none; padding: 100px 5% 50px; min-height: 100vh; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
         .dashboard-header h2 { color: var(--accent-gold); font-size: 1.8rem;}
         
+        /* Navegación de pestañas del Dashboard */
+        .dashboard-nav {
+            display: flex; gap: 15px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; overflow-x: auto;
+        }
+        .tab-btn {
+            background: transparent; border: none; color: var(--text-muted); font-family: 'Inter', sans-serif; 
+            font-size: 1rem; cursor: pointer; padding: 10px 15px; border-bottom: 2px solid transparent; 
+            transition: 0.3s; white-space: nowrap; text-transform: uppercase; font-weight: 600;
+        }
+        .tab-btn:hover { color: var(--text-main); }
+        .tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+
+        .dashboard-tab { display: none; }
+        .dashboard-tab.active { display: block; }
+
         .admin-controls { background: #141414; padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 1px dashed var(--accent-gold); display: none; }
         
-        .table-container { overflow-x: auto; background: var(--bg-card); border-radius: 8px; padding: 15px; -webkit-overflow-scrolling: touch; }
-        .data-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        .crud-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .table-container { overflow-x: auto; background: var(--bg-card); border-radius: 8px; padding: 15px; -webkit-overflow-scrolling: touch; border: 1px solid rgba(255,255,255,0.05); }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 600px; }
         .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem;}
         .data-table th { color: var(--accent-gold); text-transform: uppercase; font-size: 0.8rem; }
         .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; background: rgba(212, 175, 55, 0.2); color: var(--accent-gold); white-space: nowrap;}
+        .action-cell { display: flex; gap: 8px; }
 
         /* ==============================
            MEDIA QUERIES (MÓVILES)
@@ -186,10 +211,11 @@
         <div class="menu-toggle" id="mobileMenuBtn">
             <span></span><span></span><span></span>
         </div>
-        <div class="logo" onclick="showPublicSite()">P20</div>
+        <div class="logo" onclick="showPublicSite()">Dos Puntas Piso 20</div>
         <nav id="mainNav">
             <a href="#experiencias">Experiencias</a>
             <a href="#servicios">Servicios</a>
+            <a href="#membresias">Membresías</a>
             <a href="#reservar">Reservar</a>
             <a href="#contacto">Contacto</a>
         </nav>
@@ -199,9 +225,8 @@
         </div>
     </header>
 
-    <!-- VISTA PÚBLICA (Página Principal Completa) -->
+    <!-- VISTA PÚBLICA -->
     <main id="public-view">
-        <!-- Hero -->
         <section class="hero">
             <p class="subtitle reveal">Dos Puntas Corporate Tower · Piso 20</p>
             <h1 class="reveal" style="transition-delay: 0.2s;">Private Executive Lounge</h1>
@@ -209,7 +234,6 @@
             <button class="btn-primary reveal" style="transition-delay: 0.4s;" onclick="document.getElementById('reservar').scrollIntoView({behavior:'smooth'})">Solicitar Reserva</button>
         </section>
 
-        <!-- Características -->
         <section class="features" id="experiencias">
             <div class="feature-card reveal">
                 <h2>Sala Ejecutiva</h2>
@@ -229,7 +253,6 @@
             </div>
         </section>
 
-        <!-- Servicios -->
         <section class="services" id="servicios">
             <div class="services-text reveal">
                 <h2>Servicios del club</h2>
@@ -245,7 +268,6 @@
             </div>
         </section>
 
-        <!-- Experiencias -->
         <section class="experiences">
             <div class="exp-card reveal">
                 <h2>Catas Privadas</h2>
@@ -261,7 +283,32 @@
             </div>
         </section>
 
-        <!-- Formulario de Reservas Integrado -->
+        <!-- NUEVA SECCIÓN DE MEMBRESÍAS -->
+        <section class="experiences" id="membresias" style="background-color: var(--bg-card); padding-bottom: 120px;">
+            <div style="text-align: center; width: 100%; margin-bottom: 40px;" class="reveal">
+                <h2 style="color: var(--accent-gold); font-size: 2.5rem;">Membresías Exclusivas</h2>
+                <p style="color: var(--text-muted);">Acceso privilegiado y beneficios únicos para socios corporativos.</p>
+            </div>
+            <div class="exp-card reveal" style="text-align: center;">
+                <h2 style="color: white;">Socio <span style="color: var(--accent-gold);">Ejecutivo</span></h2>
+                <h3 style="margin-bottom: 15px;">$1,500 MXN / mes</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Acceso a áreas comunes, 5 horas de sala de juntas al mes, internet de alta velocidad y café de especialidad ilimitado.</p>
+                <button class="btn-primary" onclick="openMembershipModal('Ejecutivo')">Tramitar</button>
+            </div>
+            <div class="exp-card reveal" style="text-align: center;">
+                <h2 style="color: white;">Socio <span style="color: var(--accent-gold);">Corporativo</span></h2>
+                <h3 style="margin-bottom: 15px;">$3,500 MXN / mes</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Acceso 24/7, 15 horas de sala de juntas, 1 cata mensual gratuita (2 personas), servicio de concierge y eventos privados.</p>
+                <button class="btn-primary" onclick="openMembershipModal('Corporativo')">Tramitar</button>
+            </div>
+            <div class="exp-card reveal" style="text-align: center;">
+                <h2 style="color: white;">Socio <span style="color: var(--accent-gold);">Black</span></h2>
+                <h3 style="margin-bottom: 15px;">$7,000 MXN / mes</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Acceso total ilimitado, salas de juntas ilimitadas, casillero privado en cava, 2 catas mensuales (4 personas) y atención prioritaria.</p>
+                <button class="btn-primary" onclick="openMembershipModal('Black')">Tramitar</button>
+            </div>
+        </section>
+
         <section class="reservation-section" id="reservar">
             <div class="reservation-container reveal">
                 <h2 style="color: var(--accent-gold); text-align: center; margin-bottom: 10px;">Reserva tu Espacio</h2>
@@ -302,7 +349,6 @@
             </div>
         </section>
         
-        <!-- Footer Original -->
         <footer id="contacto">
             <h2 style="color: var(--accent-gold); margin-bottom: 20px;">P20 Lounge Club</h2>
             <p>Dos Puntas Corporate Tower · Piso 20, Zapopan, Jalisco.</p>
@@ -311,10 +357,9 @@
         </footer>
     </main>
 
-    <!-- BOTÓN WHATSAPP -->
     <a href="https://wa.me/523300000000" class="whatsapp-float" target="_blank" title="Contactar a un asesor">
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.004-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.004-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
         </svg>
     </a>
 
@@ -328,39 +373,116 @@
             <span id="roleBadge" class="status-badge">Rol</span>
         </div>
 
+        <!-- Pestañas de Navegación del Dashboard -->
+        <div class="dashboard-nav" id="dashboardNav">
+            <button class="tab-btn active" onclick="switchDashboardTab('reservations')">Reservaciones</button>
+            <button class="tab-btn" onclick="switchDashboardTab('drafts')">Borradores (Drafts)</button>
+            <button class="tab-btn" onclick="switchDashboardTab('deals')">Negocios (Deals)</button>
+        </div>
+
         <!-- Panel Propietario -->
         <div id="adminPanel" class="admin-controls reveal">
             <h3 style="margin-bottom: 15px; color: var(--accent-gold); font-size: 1.2rem;">⚡ Registrar Nuevo Usuario</h3>
-            <form id="addUserForm" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <form id="addUserForm" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px;">
+                <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 100%;">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="newName" required placeholder="Nombre del usuario">
+                </div>
                 <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 100%;">
                     <label>Correo del Nuevo Usuario</label>
                     <input type="email" id="newEmail" required placeholder="correo@ejemplo.com">
                 </div>
+                <!-- CAMPO AÑADIDO: CONTRASEÑA EN REGISTRO DE USUARIO -->
                 <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 100%;">
+                    <label>Contraseña</label>
+                    <input type="password" id="newPassword" required placeholder="Contraseña para acceso">
+                </div>
+                 <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 100%;">
                     <label>Asignar Rol</label>
                     <select id="newRole" required>
                         <option value="cliente">Cliente</option>
                         <option value="propietario">Propietario</option>
-                    </select>
+                     </select>
                 </div>
                 <button type="submit" class="btn-primary" style="width: 100%;">Registrar</button>
             </form>
+
+            <h3 style="margin-bottom: 15px; color: var(--accent-gold); font-size: 1.1rem; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 20px;">👥 Usuarios Registrados en el Sistema</h3>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo Electrónico</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody"></tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Tabla -->
-        <h3 style="margin-bottom: 15px; font-size: 1.2rem;" class="reveal">Registro de Reservaciones</h3>
-        <div class="table-container reveal">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Cliente</th>
-                        <th>Servicio</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="reservationsTableBody"></tbody>
-            </table>
+        <!-- TAB: RESERVACIONES -->
+        <div id="tab-reservations" class="dashboard-tab active reveal">
+            <h3 style="margin-bottom: 15px; font-size: 1.2rem;">Registro de Reservaciones</h3>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Servicio</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservationsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: DRAFTS -->
+        <div id="tab-drafts" class="dashboard-tab reveal">
+            <div class="crud-header">
+                <h3 style="font-size: 1.2rem;">Mis Borradores</h3>
+                <button class="btn-primary" onclick="openDraftModal()">+ Nuevo Draft</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>  
+                            <th>Título</th>
+                            <th>Vista Previa</th>
+                            <th>Acciones</th>
+                            <th>Nombre</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody id="draftsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: DEALS -->
+        <div id="tab-deals" class="dashboard-tab reveal">
+            <div class="crud-header">
+                <h3 style="font-size: 1.2rem;">Gestión de Negocios</h3>
+                <button class="btn-primary" onclick="openDealModal()">+ Nuevo Deal</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente / Empresa</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dealsTableBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -368,10 +490,14 @@
     <div id="loginModal" class="modal-overlay">
         <div class="login-box">
             <h2>Acceso Socios</h2>
-            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 20px;">Ingresa con tu correo (admin@p20lounge.com para probar).</p>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 20px;">Ingresa tus credenciales.</p>
             <form id="loginForm">
                 <div class="form-group">
                     <input type="email" id="loginEmail" required placeholder="correo@ejemplo.com">
+                </div>
+                <!-- CAMPO AÑADIDO: CONTRASEÑA EN EL LOGIN -->
+                <div class="form-group">
+                    <input type="password" id="loginPassword" required placeholder="Contraseña">
                 </div>
                 <button type="submit" class="btn-primary" style="width: 100%; margin-bottom: 10px;">Entrar</button>
                 <button type="button" class="btn-secondary" style="width: 100%; border: none;" onclick="closeLogin()">Cancelar</button>
@@ -379,9 +505,117 @@
         </div>
     </div>
 
+    <!-- NUEVO MODAL DE MEMBRESÍA -->
+    <div id="membershipModal" class="modal-overlay">
+        <div class="login-box crud-modal-box" style="max-width: 600px;">
+            <h2 id="membershipModalTitle">Tramitar Membresía</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 20px;">Completa todos los datos para procesar tu solicitud.</p>
+            <form id="membershipForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" id="memName" required placeholder="Ej. Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="memEmail" required placeholder="correo@ejemplo.com">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Teléfono Celular</label>
+                        <input type="tel" id="memPhone" required placeholder="10 dígitos">
+                    </div>
+                    <div class="form-group">
+                        <label>Empresa</label>
+                        <input type="text" id="memCompany" required placeholder="Nombre de tu empresa">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cargo / Puesto</label>
+                        <input type="text" id="memJob" required placeholder="Ej. Director General">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Membresía</label>
+                        <select id="memType" required>
+                            <option value="Ejecutivo">Socio Ejecutivo ($1,500/mes)</option>
+                            <option value="Corporativo">Socio Corporativo ($3,500/mes)</option>
+                            <option value="Black">Socio Black ($7,000/mes)</option>
+                        </select>
+                    </div>
+                </div>
+                <h3 style="color: var(--accent-gold); font-size: 1rem; margin: 15px 0 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">Datos de Facturación / Domicilio</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Dirección (Calle y Número)</label>
+                        <input type="text" id="memAddress" required placeholder="Ej. Av. Américas 1500">
+                    </div>
+                    <div class="form-group">
+                        <label>Código Postal</label>
+                        <input type="text" id="memZip" required placeholder="Ej. 44600">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px; margin-bottom: 10px;">Enviar Solicitud de Membresía</button>
+                <button type="button" class="btn-secondary" style="width: 100%; border: none;" onclick="closeMembershipModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE DRAFTS -->
+    <div id="draftModal" class="modal-overlay">
+        <div class="login-box crud-modal-box">
+            <h2 id="draftModalTitle">Nuevo Draft</h2>
+            <form id="draftForm">
+                <div class="form-group">
+                    <label>Título del Borrador</label>
+                    <input type="text" id="draftTitle" required placeholder="Ej. Propuesta Corporativa">
+                </div>
+                <div class="form-group">
+                    <label>Contenido</label>
+                    <textarea id="draftContent" rows="4" required placeholder="Escribe aquí los detalles..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-bottom: 10px;">Guardar Draft</button>
+                <button type="button" class="btn-secondary" style="width: 100%; border: none;" onclick="closeDraftModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE DEALS -->
+    <div id="dealModal" class="modal-overlay">
+        <div class="login-box crud-modal-box">
+            <h2 id="dealModalTitle">Nuevo Deal</h2>
+            <form id="dealForm">
+                <div class="form-group">
+                    <label>Cliente / Empresa</label>
+                    <input type="text" id="dealClient" required placeholder="Nombre de la empresa o cliente">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Monto Estimado ($)</label>
+                        <input type="number" id="dealAmount" required placeholder="Ej. 50000">
+                    </div>
+                    <div class="form-group">
+                        <label>Estado del Negocio</label>
+                        <select id="dealStatus" required>
+                            <option value="Prospecto">Prospecto</option>
+                            <option value="En Negociación">En Negociación</option>
+                            <option value="Cerrado Ganado">Cerrado Ganado</option>
+                            <option value="Perdido">Perdido</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-bottom: 10px;">Guardar Deal</button>
+                <button type="button" class="btn-secondary" style="width: 100%; border: none;" onclick="closeDealModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
     <!-- SCRIPT -->
     <script>
-        // 1. Lógica del Menú Móvil y Scroll Suave
+        // ==============================
+        // 1. UI GENERAL Y NAVEGACIÓN
+        // ==============================
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mainNav = document.getElementById('mainNav');
         
@@ -392,29 +626,30 @@
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                mainNav.classList.remove('active'); // Cierra el menú móvil al clickear
+                mainNav.classList.remove('active');
                 const targetId = this.getAttribute('href');
                 const targetElement = document.querySelector(targetId);
-                
-                if(targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
-                }
+                if(targetElement) targetElement.scrollIntoView({ behavior: 'smooth' });
             });
         });
 
-        // 2. Animaciones de Scroll Optimizadas (Intersection Observer)
+        // ==============================
+        // 2. ANIMACIONES SCROLL
+        // ==============================
         document.addEventListener('DOMContentLoaded', () => {
             const reveals = document.querySelectorAll('.reveal');
             const observer = new IntersectionObserver(entries => {
                 entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
             }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
-            
             reveals.forEach(r => observer.observe(r));
         });
 
-        // 3. Base de Datos Simulada y Sistema de Roles
+        // ==============================
+        // 3. BASE DE DATOS LOCAL Y AUTENTICACIÓN
+        // ==============================
         if (!localStorage.getItem('p20_users')) {
-            localStorage.setItem('p20_users', JSON.stringify([{ email: 'admin@p20lounge.com', role: 'propietario' }]));
+            // ACTUALIZADO: Se añadió un campo de contraseña al usuario administrador por defecto
+            localStorage.setItem('p20_users', JSON.stringify([{ name: 'Administrador Principal', email: 'a25110268@gmail.com', password: '21Abril.05', role: 'propietario' }]));
         }
 
         let currentUser = null;
@@ -435,14 +670,23 @@
 
         function showDashboard() {
             publicView.style.display = 'none';
-            whatsappBtn.style.display = 'none'; // Ocultar WhatsApp en el panel de admin
+            whatsappBtn.style.display = 'none'; 
             dashboardView.style.display = 'block';
-            document.getElementById('userGreeting').innerText = `Usuario: ${currentUser.email}`;
+            document.getElementById('userGreeting').innerText = `Usuario: ${currentUser.name || currentUser.email}`;
             document.getElementById('roleBadge').innerText = currentUser.role.toUpperCase();
-            adminPanel.style.display = currentUser.role === 'propietario' ? 'block' : 'none';
-            renderReservations();
             
-            // Re-disparar animaciones en el dashboard
+            // Lógica para mostrar panel de admin y la tabla de usuarios
+            if(currentUser.role === 'propietario') {
+                adminPanel.style.display = 'block';
+                renderUsersTable(); // Mostrar la tabla al iniciar
+            } else {
+                adminPanel.style.display = 'none';
+            }
+            
+            // Forzar pestaña principal y renderizar todo (incluyendo los que "no se veían")
+            switchDashboardTab('reservations');
+            
+            // Disparar animaciones
             document.querySelectorAll('#dashboard-view .reveal').forEach(el => el.classList.remove('active'));
             setTimeout(() => {
                 document.querySelectorAll('#dashboard-view .reveal').forEach(el => el.classList.add('active'));
@@ -452,8 +696,10 @@
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.toLowerCase();
+            const password = document.getElementById('loginPassword').value; // ACTUALIZADO: Toma el valor de la contraseña
             const users = JSON.parse(localStorage.getItem('p20_users'));
-            const userFound = users.find(u => u.email === email);
+            // ACTUALIZADO: Compara tanto el correo como la contraseña
+            const userFound = users.find(u => u.email === email && u.password === password);
 
             if (userFound) {
                 currentUser = userFound;
@@ -462,7 +708,8 @@
                 document.getElementById('btnLogout').style.display = 'inline-block';
                 showDashboard();
             } else {
-                alert('Acceso denegado. Este correo no está registrado.');
+                // ACTUALIZADO: Mensaje de error para credenciales incorrectas
+                alert('Acceso denegado. Correo o contraseña incorrectos.');
             }
             this.reset();
         });
@@ -474,25 +721,118 @@
             showPublicSite();
         }
 
+        // ==============================
+        // 3.5 LÓGICA DE REGISTRO DE USUARIOS
+        // ==============================
         document.getElementById('addUserForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            if(currentUser?.role !== 'propietario') return;
+            const newName = document.getElementById('newName').value; 
             const newEmail = document.getElementById('newEmail').value.toLowerCase();
+            const newPassword = document.getElementById('newPassword').value; // ACTUALIZADO: Toma la contraseña del nuevo usuario
             const newRole = document.getElementById('newRole').value;
-            let users = JSON.parse(localStorage.getItem('p20_users'));
+            
+            let users = JSON.parse(localStorage.getItem('p20_users')) || [];
+            
+            // Verificar si el correo ya existe
+            if(users.some(u => u.email === newEmail)) {
+                alert('Error: Este correo ya se encuentra registrado en el sistema.');
+                return;
+            }
 
-            if(users.find(u => u.email === newEmail)) return alert('Este correo ya está registrado.');
-
-            users.push({ email: newEmail, role: newRole });
+            // ACTUALIZADO: Agregando la propiedad "password" al objeto guardado
+            users.push({ name: newName, email: newEmail, password: newPassword, role: newRole });
             localStorage.setItem('p20_users', JSON.stringify(users));
-            alert(`Usuario ${newEmail} agregado como ${newRole}.`);
+            
+            alert('Usuario registrado exitosamente.');
             this.reset();
+            renderUsersTable(); // Actualizar la tabla
         });
 
+        function renderUsersTable() {
+            const tableBody = document.getElementById('usersTableBody');
+            const users = JSON.parse(localStorage.getItem('p20_users')) || [];
+            tableBody.innerHTML = ''; 
+
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                
+                // Evitamos que el admin se borre a sí mismo accidentalmente
+                const actionBtn = u.email === currentUser.email 
+                    ? `<span style="color:var(--text-muted); font-size:0.8rem;">Sesión Actual</span>`
+                    : `<button class="btn-small danger" onclick="deleteUser('${u.email}')">Borrar</button>`;
+
+                tr.innerHTML = `
+                    <td><strong>${u.name || 'Sin nombre'}</strong></td>
+                    <td>${u.email}</td>
+                    <td><span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-main);">${u.role.toUpperCase()}</span></td>
+                    <td class="action-cell">${actionBtn}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function deleteUser(email) {
+            if(confirm(`¿Estás seguro de que deseas eliminar al usuario ${email} del sistema?`)) {
+                let users = JSON.parse(localStorage.getItem('p20_users')) || [];
+                users = users.filter(u => u.email !== email);
+                localStorage.setItem('p20_users', JSON.stringify(users));
+                renderUsersTable();
+            }
+        }
+
+        // ==============================
+        // NUEVA LÓGICA DE MEMBRESÍAS
+        // ==============================
+        const membershipModal = document.getElementById('membershipModal');
+        
+        function openMembershipModal(type) {
+            document.getElementById('memType').value = type;
+            membershipModal.style.display = 'flex';
+        }
+        
+        function closeMembershipModal() {
+            membershipModal.style.display = 'none';
+        }
+
+        document.getElementById('membershipForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = 'Procesando...';
+            btn.style.opacity = '0.7';
+
+            setTimeout(() => {
+                alert('¡Solicitud de membresía enviada con éxito! Un asesor se pondrá en contacto para finalizar el pago y los detalles.');
+                this.reset();
+                btn.innerText = originalText;
+                btn.style.opacity = '1';
+                closeMembershipModal();
+            }, 800);
+        });
+
+        // ==============================
+        // 4. LÓGICA DE PESTAÑAS (DASHBOARD)
+        // ==============================
+        function switchDashboardTab(tabId) {
+            // Ocultar todas las pestañas y quitar clase active de botones
+            document.querySelectorAll('.dashboard-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            // Mostrar la pestaña seleccionada
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            document.querySelector(`.tab-btn[onclick="switchDashboardTab('${tabId}')"]`).classList.add('active');
+
+            // Renderizar los datos correspondientes asegurándonos de que se muestren
+            if(tabId === 'reservations') renderReservations();
+            if(tabId === 'drafts') renderDrafts();
+            if(tabId === 'deals') renderDeals();
+        }
+
+        // ==============================
+        // 5. RESERVACIONES (Existente)
+        // ==============================
         document.getElementById('publicReservationForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            // Efecto visual en el botón
             const btn = this.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
             btn.innerText = 'Procesando...';
@@ -510,10 +850,8 @@
                 localStorage.setItem('p20_reservations', JSON.stringify(reservations));
                 alert('¡Solicitud enviada con éxito! Podrás verla ingresando a tu cuenta en el Portal.');
                 this.reset();
-                
                 btn.innerText = originalText;
                 btn.style.opacity = '1';
-                
                 if(currentUser) renderReservations();
             }, 800);
         });
@@ -522,17 +860,194 @@
             const tableBody = document.getElementById('reservationsTableBody');
             const reservations = JSON.parse(localStorage.getItem('p20_reservations')) || [];
             tableBody.innerHTML = ''; 
-
             const filtered = currentUser.role === 'propietario' ? reservations : reservations.filter(r => r.email === currentUser.email);
 
             if (filtered.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a3a3a3; padding: 20px;">Sin reservaciones.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a3a3a3; padding: 20px;">Sin reservaciones registradas.</td></tr>';
                 return;
             }
 
             filtered.forEach(res => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td>${res.date}</td><td>${res.email}</td><td>${res.service}</td><td><span class="status-badge">${res.status}</span></td>`;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // ==============================
+        // 6. DRAFTS LÓGICA (Existente y Corregida)
+        // ==============================
+        let currentDraftId = null;
+        
+        function openDraftModal(id = null) {
+            currentDraftId = id;
+            if (id) {
+                // Modo Edición
+                const drafts = JSON.parse(localStorage.getItem('p20_drafts')) || [];
+                const draft = drafts.find(d => d.id === id);
+                document.getElementById('draftTitle').value = draft.title;
+                document.getElementById('draftContent').value = draft.content;
+                document.getElementById('draftModalTitle').innerText = 'Editar Draft';
+            } else {
+                // Modo Creación
+                document.getElementById('draftForm').reset();
+                document.getElementById('draftModalTitle').innerText = 'Nuevo Draft';
+            }
+            document.getElementById('draftModal').style.display = 'flex';
+        }
+
+        function closeDraftModal() {
+            document.getElementById('draftModal').style.display = 'none';
+        }
+
+        document.getElementById('draftForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let drafts = JSON.parse(localStorage.getItem('p20_drafts')) || [];
+            
+            const draftData = {
+                title: document.getElementById('draftTitle').value,
+                content: document.getElementById('draftContent').value,
+                userEmail: currentUser.email,
+                date: new Date().toLocaleDateString()
+            };
+
+            if (currentDraftId) {
+                // Actualizar
+                drafts = drafts.map(d => d.id === currentDraftId ? { ...d, ...draftData } : d);
+            } else {
+                // Crear nuevo
+                draftData.id = Date.now();
+                drafts.push(draftData);
+            }
+
+            localStorage.setItem('p20_drafts', JSON.stringify(drafts));
+            closeDraftModal();
+            renderDrafts();
+        });
+
+        function deleteDraft(id) {
+            if(confirm("¿Estás seguro de eliminar este borrador?")) {
+                let drafts = JSON.parse(localStorage.getItem('p20_drafts')) || [];
+                drafts = drafts.filter(d => d.id !== id);
+                localStorage.setItem('p20_drafts', JSON.stringify(drafts));
+                renderDrafts();
+            }
+        }
+
+        function renderDrafts() {
+            const tableBody = document.getElementById('draftsTableBody');
+            const drafts = JSON.parse(localStorage.getItem('p20_drafts')) || [];
+            tableBody.innerHTML = '';
+
+            const filtered = currentUser.role === 'propietario' ? drafts : drafts.filter(d => d.userEmail === currentUser.email);
+
+            if (filtered.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#a3a3a3; padding: 20px;">No tienes borradores guardados.</td></tr>';
+                return;
+            }
+
+            filtered.forEach(d => {
+                const preview = d.content.length > 30 ? d.content.substring(0, 30) + '...' : d.content;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${d.date || 'Reciente'}</td>
+                    <td><strong>${d.title}</strong></td>
+                    <td style="color:var(--text-muted); font-size: 0.8rem;">${preview}</td>
+                    <td class="action-cell">
+                        <button class="btn-small" onclick="openDraftModal(${d.id})">Editar</button>
+                        <button class="btn-small danger" onclick="deleteDraft(${d.id})">Borrar</button>
+                    </td>
+                    <td>${d.userEmail}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // ==============================
+        // 7. DEALS LÓGICA (Existente y Corregida)
+        // ==============================
+        let currentDealId = null;
+
+        function openDealModal(id = null) {
+            currentDealId = id;
+            if (id) {
+                const deals = JSON.parse(localStorage.getItem('p20_deals')) || [];
+                const deal = deals.find(d => d.id === id);
+                document.getElementById('dealClient').value = deal.client;
+                document.getElementById('dealAmount').value = deal.amount;
+                document.getElementById('dealStatus').value = deal.status;
+                document.getElementById('dealModalTitle').innerText = 'Editar Deal';
+            } else {
+                document.getElementById('dealForm').reset();
+                document.getElementById('dealModalTitle').innerText = 'Nuevo Deal';
+            }
+            document.getElementById('dealModal').style.display = 'flex';
+        }
+
+        function closeDealModal() {
+            document.getElementById('dealModal').style.display = 'none';
+        }
+
+        document.getElementById('dealForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let deals = JSON.parse(localStorage.getItem('p20_deals')) || [];
+            
+            const dealData = {
+                client: document.getElementById('dealClient').value,
+                amount: document.getElementById('dealAmount').value,
+                status: document.getElementById('dealStatus').value,
+                userEmail: currentUser.email
+            };
+
+            if (currentDealId) {
+                deals = deals.map(d => d.id === currentDealId ? { ...d, ...dealData } : d);
+            } else {
+                dealData.id = Date.now();
+                deals.push(dealData);
+            }
+
+            localStorage.setItem('p20_deals', JSON.stringify(deals));
+            closeDealModal();
+            renderDeals();
+        });
+
+        function deleteDeal(id) {
+            if(confirm("¿Estás seguro de eliminar este deal del sistema?")) {
+                let deals = JSON.parse(localStorage.getItem('p20_deals')) || [];
+                deals = deals.filter(d => d.id !== id);
+                localStorage.setItem('p20_deals', JSON.stringify(deals));
+                renderDeals();
+            }
+        }
+
+        function renderDeals() {
+            const tableBody = document.getElementById('dealsTableBody');
+            const deals = JSON.parse(localStorage.getItem('p20_deals')) || [];
+            tableBody.innerHTML = '';
+
+            const filtered = currentUser.role === 'propietario' ? deals : deals.filter(d => d.userEmail === currentUser.email);
+
+            if (filtered.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a3a3a3; padding: 20px;">No hay negocios registrados.</td></tr>';
+                return;
+            }
+
+            filtered.forEach(d => {
+                // Darle color al badge dependiendo del estatus
+                let badgeColor = 'rgba(212, 175, 55, 0.2)'; // Gold por defecto
+                if(d.status === 'Cerrado Ganado') badgeColor = 'rgba(37, 211, 102, 0.2)'; // Verde
+                if(d.status === 'Perdido') badgeColor = 'rgba(255, 77, 77, 0.2)'; // Rojo
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${d.client}</strong></td>
+                    <td>$${parseFloat(d.amount).toLocaleString('en-US')}</td>
+                    <td><span class="status-badge" style="background:${badgeColor}">${d.status}</span></td>
+                    <td class="action-cell">
+                        <button class="btn-small" onclick="openDealModal(${d.id})">Editar</button>
+                        <button class="btn-small danger" onclick="deleteDeal(${d.id})">Borrar</button>
+                    </td>
+                `;
                 tableBody.appendChild(tr);
             });
         }
