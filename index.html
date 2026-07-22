@@ -611,47 +611,70 @@
         </div>
     </div>
 
-    <!-- SCRIPT -->
+   <!-- 1. IMPORTAR FIREBASE DESDE LA NUBE -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <!-- SCRIPT PRINCIPAL -->
     <script>
         // ==============================
-        // 1. UI GENERAL Y NAVEGACIÓN
+        // 2. CONFIGURACIÓN DE TU PROYECTO P20 LOUNGE
+        // ==============================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBrZnT8MUJIXq5IsfVocx5h0iabsRB_7CE",
+            authDomain: "p20-lounge.firebaseapp.com",
+            projectId: "p20-lounge",
+            storageBucket: "p20-lounge.firebasestorage.app",
+            messagingSenderId: "28911320403",
+            appId: "1:28911320403:web:68568e8a97b9279bb175a6"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ==============================
+        // 3. UI GENERAL Y NAVEGACIÓN
         // ==============================
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mainNav = document.getElementById('mainNav');
         
-        mobileMenuBtn.addEventListener('click', () => {
-            mainNav.classList.toggle('active');
-        });
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => { mainNav.classList.toggle('active'); });
+        }
         
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                mainNav.classList.remove('active');
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
+                if (mainNav) mainNav.classList.remove('active');
+                const targetElement = document.querySelector(this.getAttribute('href'));
                 if(targetElement) targetElement.scrollIntoView({ behavior: 'smooth' });
             });
         });
 
-        // ==============================
-        // 2. ANIMACIONES SCROLL
-        // ==============================
         document.addEventListener('DOMContentLoaded', () => {
             const reveals = document.querySelectorAll('.reveal');
             const observer = new IntersectionObserver(entries => {
                 entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
             }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
             reveals.forEach(r => observer.observe(r));
+
+            // CREAR ADMIN POR DEFECTO SI LA BASE DE DATOS ESTÁ VACÍA
+            db.collection('p20_users').get().then(snapshot => {
+                if(snapshot.empty) {
+                    db.collection('p20_users').add({
+                        name: 'Administrador Principal', 
+                        email: 'a25110268@gmail.com', 
+                        password: '21Abril.05', 
+                        role: 'propietario'
+                    });
+                }
+            }).catch(err => console.error("Error inicializando base de datos:", err));
         });
 
         // ==============================
-        // 3. BASE DE DATOS LOCAL Y AUTENTICACIÓN
+        // 4. AUTENTICACIÓN (LOGIN)
         // ==============================
-        if (!localStorage.getItem('p20_users')) {
-            // ACTUALIZADO: Se añadió un campo de contraseña al usuario administrador por defecto
-            localStorage.setItem('p20_users', JSON.stringify([{ name: 'Administrador Principal', email: 'a25110268@gmail.com', password: '21Abril.05', role: 'propietario' }]));
-        }
-
         let currentUser = null;
         const publicView = document.getElementById('public-view');
         const dashboardView = document.getElementById('dashboard-view');
@@ -665,52 +688,54 @@
         function showPublicSite() {
             publicView.style.display = 'block';
             dashboardView.style.display = 'none';
-            whatsappBtn.style.display = 'flex';
+            if (whatsappBtn) whatsappBtn.style.display = 'flex';
         }
 
         function showDashboard() {
             publicView.style.display = 'none';
-            whatsappBtn.style.display = 'none'; 
+            if (whatsappBtn) whatsappBtn.style.display = 'none'; 
             dashboardView.style.display = 'block';
             document.getElementById('userGreeting').innerText = `Usuario: ${currentUser.name || currentUser.email}`;
             document.getElementById('roleBadge').innerText = currentUser.role.toUpperCase();
             
-            // Lógica para mostrar panel de admin y la tabla de usuarios
             if(currentUser.role === 'propietario') {
                 adminPanel.style.display = 'block';
-                renderUsersTable(); // Mostrar la tabla al iniciar
+                renderUsersTable(); 
             } else {
                 adminPanel.style.display = 'none';
             }
-            
-            // Forzar pestaña principal y renderizar todo (incluyendo los que "no se veían")
             switchDashboardTab('reservations');
             
-            // Disparar animaciones
             document.querySelectorAll('#dashboard-view .reveal').forEach(el => el.classList.remove('active'));
-            setTimeout(() => {
-                document.querySelectorAll('#dashboard-view .reveal').forEach(el => el.classList.add('active'));
-            }, 50);
+            setTimeout(() => { document.querySelectorAll('#dashboard-view .reveal').forEach(el => el.classList.add('active')); }, 50);
         }
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // LOGIN CONECTADO A LA NUBE
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            btn.innerText = 'Verificando...';
+            
             const email = document.getElementById('loginEmail').value.toLowerCase();
-            const password = document.getElementById('loginPassword').value; // ACTUALIZADO: Toma el valor de la contraseña
-            const users = JSON.parse(localStorage.getItem('p20_users'));
-            // ACTUALIZADO: Compara tanto el correo como la contraseña
-            const userFound = users.find(u => u.email === email && u.password === password);
+            const password = document.getElementById('loginPassword').value;
 
-            if (userFound) {
-                currentUser = userFound;
-                closeLogin();
-                document.getElementById('btnPortal').style.display = 'none';
-                document.getElementById('btnLogout').style.display = 'inline-block';
-                showDashboard();
-            } else {
-                // ACTUALIZADO: Mensaje de error para credenciales incorrectas
-                alert('Acceso denegado. Correo o contraseña incorrectos.');
+            try {
+                const snapshot = await db.collection('p20_users').where('email', '==', email).where('password', '==', password).get();
+
+                if (!snapshot.empty) {
+                    currentUser = snapshot.docs[0].data();
+                    closeLogin();
+                    document.getElementById('btnPortal').style.display = 'none';
+                    document.getElementById('btnLogout').style.display = 'inline-block';
+                    showDashboard();
+                } else {
+                    alert('Acceso denegado. Correo o contraseña incorrectos.');
+                }
+            } catch (error) {
+                alert('Error de conexión a la base de datos.');
+                console.error(error);
             }
+            btn.innerText = 'Entrar';
             this.reset();
         });
 
@@ -722,152 +747,125 @@
         }
 
         // ==============================
-        // 3.5 LÓGICA DE REGISTRO DE USUARIOS
+        // 5. REGISTRO Y GESTIÓN DE USUARIOS
         // ==============================
-        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+        document.getElementById('addUserForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const newName = document.getElementById('newName').value; 
             const newEmail = document.getElementById('newEmail').value.toLowerCase();
-            const newPassword = document.getElementById('newPassword').value; // ACTUALIZADO: Toma la contraseña del nuevo usuario
+            const newPassword = document.getElementById('newPassword').value; 
             const newRole = document.getElementById('newRole').value;
             
-            let users = JSON.parse(localStorage.getItem('p20_users')) || [];
-            
-            // Verificar si el correo ya existe
-            if(users.some(u => u.email === newEmail)) {
+            const snapshot = await db.collection('p20_users').where('email', '==', newEmail).get();
+            if(!snapshot.empty) {
                 alert('Error: Este correo ya se encuentra registrado en el sistema.');
                 return;
             }
 
-            // ACTUALIZADO: Agregando la propiedad "password" al objeto guardado
-            users.push({ name: newName, email: newEmail, password: newPassword, role: newRole });
-            localStorage.setItem('p20_users', JSON.stringify(users));
-            
-            alert('Usuario registrado exitosamente.');
+            await db.collection('p20_users').add({ name: newName, email: newEmail, password: newPassword, role: newRole });
+            alert('Usuario registrado exitosamente en la base de datos.');
             this.reset();
-            renderUsersTable(); // Actualizar la tabla
+            renderUsersTable();
         });
 
-        function renderUsersTable() {
+        async function renderUsersTable() {
             const tableBody = document.getElementById('usersTableBody');
-            const users = JSON.parse(localStorage.getItem('p20_users')) || [];
+            tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando usuarios...</td></tr>';
+            
+            const snapshot = await db.collection('p20_users').get();
             tableBody.innerHTML = ''; 
 
-            users.forEach(u => {
-                const tr = document.createElement('tr');
-                
-                // Evitamos que el admin se borre a sí mismo accidentalmente
+            snapshot.forEach(doc => {
+                const u = doc.data();
+                const id = doc.id;
                 const actionBtn = u.email === currentUser.email 
                     ? `<span style="color:var(--text-muted); font-size:0.8rem;">Sesión Actual</span>`
-                    : `<button class="btn-small danger" onclick="deleteUser('${u.email}')">Borrar</button>`;
+                    : `<button class="btn-small danger" onclick="deleteUser('${id}', '${u.email}')">Borrar</button>`;
 
-                tr.innerHTML = `
-                    <td><strong>${u.name || 'Sin nombre'}</strong></td>
-                    <td>${u.email}</td>
-                    <td><span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-main);">${u.role.toUpperCase()}</span></td>
-                    <td class="action-cell">${actionBtn}</td>
-                `;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${u.name || 'Sin nombre'}</strong></td><td>${u.email}</td><td><span class="status-badge" style="background: rgba(255,255,255,0.1);">${u.role.toUpperCase()}</span></td><td class="action-cell">${actionBtn}</td>`;
                 tableBody.appendChild(tr);
             });
         }
 
-        function deleteUser(email) {
-            if(confirm(`¿Estás seguro de que deseas eliminar al usuario ${email} del sistema?`)) {
-                let users = JSON.parse(localStorage.getItem('p20_users')) || [];
-                users = users.filter(u => u.email !== email);
-                localStorage.setItem('p20_users', JSON.stringify(users));
+        async function deleteUser(id, email) {
+            if(confirm(`¿Estás seguro de que deseas eliminar al usuario ${email} del sistema global?`)) {
+                await db.collection('p20_users').doc(id).delete();
                 renderUsersTable();
             }
         }
 
-        // ==============================
-        // NUEVA LÓGICA DE MEMBRESÍAS
-        // ==============================
+        // Membresías
         const membershipModal = document.getElementById('membershipModal');
+        function openMembershipModal(type) { document.getElementById('memType').value = type; membershipModal.style.display = 'flex'; }
+        function closeMembershipModal() { membershipModal.style.display = 'none'; }
         
-        function openMembershipModal(type) {
-            document.getElementById('memType').value = type;
-            membershipModal.style.display = 'flex';
-        }
-        
-        function closeMembershipModal() {
-            membershipModal.style.display = 'none';
-        }
-
-        document.getElementById('membershipForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = this.querySelector('button[type="submit"]');
-            const originalText = btn.innerText;
-            btn.innerText = 'Procesando...';
-            btn.style.opacity = '0.7';
-
-            setTimeout(() => {
-                alert('¡Solicitud de membresía enviada con éxito! Un asesor se pondrá en contacto para finalizar el pago y los detalles.');
+        const membershipForm = document.getElementById('membershipForm');
+        if (membershipForm) {
+            membershipForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('¡Solicitud de membresía enviada con éxito! Un asesor se pondrá en contacto.');
                 this.reset();
-                btn.innerText = originalText;
-                btn.style.opacity = '1';
                 closeMembershipModal();
-            }, 800);
-        });
+            });
+        }
 
         // ==============================
-        // 4. LÓGICA DE PESTAÑAS (DASHBOARD)
+        // 6. DASHBOARD (PESTAÑAS Y RESERVAS)
         // ==============================
         function switchDashboardTab(tabId) {
-            // Ocultar todas las pestañas y quitar clase active de botones
             document.querySelectorAll('.dashboard-tab').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
-            // Mostrar la pestaña seleccionada
             document.getElementById(`tab-${tabId}`).classList.add('active');
-            document.querySelector(`.tab-btn[onclick="switchDashboardTab('${tabId}')"]`).classList.add('active');
+            
+            const targetBtn = document.querySelector(`.tab-btn[onclick="switchDashboardTab('${tabId}')"]`);
+            if (targetBtn) targetBtn.classList.add('active');
 
-            // Renderizar los datos correspondientes asegurándonos de que se muestren
             if(tabId === 'reservations') renderReservations();
             if(tabId === 'drafts') renderDrafts();
             if(tabId === 'deals') renderDeals();
         }
 
-        // ==============================
-        // 5. RESERVACIONES (Existente)
-        // ==============================
-        document.getElementById('publicReservationForm').addEventListener('submit', function(e) {
+        // Guardar reservación en la Nube
+        document.getElementById('publicReservationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = this.querySelector('button[type="submit"]');
-            const originalText = btn.innerText;
-            btn.innerText = 'Procesando...';
-            btn.style.opacity = '0.7';
+            btn.innerText = 'Enviando...';
 
-            setTimeout(() => {
-                let reservations = JSON.parse(localStorage.getItem('p20_reservations')) || [];
-                reservations.push({
-                    id: Date.now(),
-                    email: document.getElementById('resEmail').value.toLowerCase(),
-                    service: document.getElementById('resService').value,
-                    date: document.getElementById('resDate').value,
-                    status: 'Pendiente'
-                });
-                localStorage.setItem('p20_reservations', JSON.stringify(reservations));
-                alert('¡Solicitud enviada con éxito! Podrás verla ingresando a tu cuenta en el Portal.');
-                this.reset();
-                btn.innerText = originalText;
-                btn.style.opacity = '1';
-                if(currentUser) renderReservations();
-            }, 800);
+            await db.collection('p20_reservations').add({
+                email: document.getElementById('resEmail').value.toLowerCase(),
+                service: document.getElementById('resService').value,
+                date: document.getElementById('resDate').value,
+                status: 'Pendiente',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            alert('¡Solicitud enviada con éxito! Quedó registrada en la base central.');
+            this.reset();
+            btn.innerText = 'Enviar Solicitud al Portal';
+            if(currentUser) renderReservations();
         });
 
-        function renderReservations() {
+        // Leer reservaciones de la nube
+        async function renderReservations() {
             const tableBody = document.getElementById('reservationsTableBody');
-            const reservations = JSON.parse(localStorage.getItem('p20_reservations')) || [];
-            tableBody.innerHTML = ''; 
-            const filtered = currentUser.role === 'propietario' ? reservations : reservations.filter(r => r.email === currentUser.email);
+            tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando reservas...</td></tr>';
+            
+            let query = db.collection('p20_reservations');
+            if (currentUser.role !== 'propietario') {
+                query = query.where('email', '==', currentUser.email);
+            }
 
-            if (filtered.length === 0) {
+            const snapshot = await query.get();
+            tableBody.innerHTML = ''; 
+
+            if (snapshot.empty) {
                 tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a3a3a3; padding: 20px;">Sin reservaciones registradas.</td></tr>';
                 return;
             }
 
-            filtered.forEach(res => {
+            snapshot.forEach(doc => {
+                const res = doc.data();
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td>${res.date}</td><td>${res.email}</td><td>${res.service}</td><td><span class="status-badge">${res.status}</span></td>`;
                 tableBody.appendChild(tr);
@@ -875,182 +873,15 @@
         }
 
         // ==============================
-        // 6. DRAFTS LÓGICA (Existente y Corregida)
+        // 7. BORRADORES Y DEALS
         // ==============================
-        let currentDraftId = null;
-        
-        function openDraftModal(id = null) {
-            currentDraftId = id;
-            if (id) {
-                // Modo Edición
-                const drafts = JSON.parse(localStorage.getItem('p20_drafts')) || [];
-                const draft = drafts.find(d => d.id === id);
-                document.getElementById('draftTitle').value = draft.title;
-                document.getElementById('draftContent').value = draft.content;
-                document.getElementById('draftModalTitle').innerText = 'Editar Draft';
-            } else {
-                // Modo Creación
-                document.getElementById('draftForm').reset();
-                document.getElementById('draftModalTitle').innerText = 'Nuevo Draft';
-            }
-            document.getElementById('draftModal').style.display = 'flex';
-        }
-
-        function closeDraftModal() {
-            document.getElementById('draftModal').style.display = 'none';
-        }
-
-        document.getElementById('draftForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let drafts = JSON.parse(localStorage.getItem('p20_drafts')) || [];
-            
-            const draftData = {
-                title: document.getElementById('draftTitle').value,
-                content: document.getElementById('draftContent').value,
-                userEmail: currentUser.email,
-                date: new Date().toLocaleDateString()
-            };
-
-            if (currentDraftId) {
-                // Actualizar
-                drafts = drafts.map(d => d.id === currentDraftId ? { ...d, ...draftData } : d);
-            } else {
-                // Crear nuevo
-                draftData.id = Date.now();
-                drafts.push(draftData);
-            }
-
-            localStorage.setItem('p20_drafts', JSON.stringify(drafts));
-            closeDraftModal();
-            renderDrafts();
-        });
-
-        function deleteDraft(id) {
-            if(confirm("¿Estás seguro de eliminar este borrador?")) {
-                let drafts = JSON.parse(localStorage.getItem('p20_drafts')) || [];
-                drafts = drafts.filter(d => d.id !== id);
-                localStorage.setItem('p20_drafts', JSON.stringify(drafts));
-                renderDrafts();
-            }
-        }
-
-        function renderDrafts() {
-            const tableBody = document.getElementById('draftsTableBody');
-            const drafts = JSON.parse(localStorage.getItem('p20_drafts')) || [];
-            tableBody.innerHTML = '';
-
-            const filtered = currentUser.role === 'propietario' ? drafts : drafts.filter(d => d.userEmail === currentUser.email);
-
-            if (filtered.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#a3a3a3; padding: 20px;">No tienes borradores guardados.</td></tr>';
-                return;
-            }
-
-            filtered.forEach(d => {
-                const preview = d.content.length > 30 ? d.content.substring(0, 30) + '...' : d.content;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${d.date || 'Reciente'}</td>
-                    <td><strong>${d.title}</strong></td>
-                    <td style="color:var(--text-muted); font-size: 0.8rem;">${preview}</td>
-                    <td class="action-cell">
-                        <button class="btn-small" onclick="openDraftModal(${d.id})">Editar</button>
-                        <button class="btn-small danger" onclick="deleteDraft(${d.id})">Borrar</button>
-                    </td>
-                    <td>${d.userEmail}</td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        }
-
-        // ==============================
-        // 7. DEALS LÓGICA (Existente y Corregida)
-        // ==============================
-        let currentDealId = null;
-
-        function openDealModal(id = null) {
-            currentDealId = id;
-            if (id) {
-                const deals = JSON.parse(localStorage.getItem('p20_deals')) || [];
-                const deal = deals.find(d => d.id === id);
-                document.getElementById('dealClient').value = deal.client;
-                document.getElementById('dealAmount').value = deal.amount;
-                document.getElementById('dealStatus').value = deal.status;
-                document.getElementById('dealModalTitle').innerText = 'Editar Deal';
-            } else {
-                document.getElementById('dealForm').reset();
-                document.getElementById('dealModalTitle').innerText = 'Nuevo Deal';
-            }
-            document.getElementById('dealModal').style.display = 'flex';
-        }
-
-        function closeDealModal() {
-            document.getElementById('dealModal').style.display = 'none';
-        }
-
-        document.getElementById('dealForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let deals = JSON.parse(localStorage.getItem('p20_deals')) || [];
-            
-            const dealData = {
-                client: document.getElementById('dealClient').value,
-                amount: document.getElementById('dealAmount').value,
-                status: document.getElementById('dealStatus').value,
-                userEmail: currentUser.email
-            };
-
-            if (currentDealId) {
-                deals = deals.map(d => d.id === currentDealId ? { ...d, ...dealData } : d);
-            } else {
-                dealData.id = Date.now();
-                deals.push(dealData);
-            }
-
-            localStorage.setItem('p20_deals', JSON.stringify(deals));
-            closeDealModal();
-            renderDeals();
-        });
-
-        function deleteDeal(id) {
-            if(confirm("¿Estás seguro de eliminar este deal del sistema?")) {
-                let deals = JSON.parse(localStorage.getItem('p20_deals')) || [];
-                deals = deals.filter(d => d.id !== id);
-                localStorage.setItem('p20_deals', JSON.stringify(deals));
-                renderDeals();
-            }
-        }
-
-        function renderDeals() {
-            const tableBody = document.getElementById('dealsTableBody');
-            const deals = JSON.parse(localStorage.getItem('p20_deals')) || [];
-            tableBody.innerHTML = '';
-
-            const filtered = currentUser.role === 'propietario' ? deals : deals.filter(d => d.userEmail === currentUser.email);
-
-            if (filtered.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a3a3a3; padding: 20px;">No hay negocios registrados.</td></tr>';
-                return;
-            }
-
-            filtered.forEach(d => {
-                // Darle color al badge dependiendo del estatus
-                let badgeColor = 'rgba(212, 175, 55, 0.2)'; // Gold por defecto
-                if(d.status === 'Cerrado Ganado') badgeColor = 'rgba(37, 211, 102, 0.2)'; // Verde
-                if(d.status === 'Perdido') badgeColor = 'rgba(255, 77, 77, 0.2)'; // Rojo
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${d.client}</strong></td>
-                    <td>$${parseFloat(d.amount).toLocaleString('en-US')}</td>
-                    <td><span class="status-badge" style="background:${badgeColor}">${d.status}</span></td>
-                    <td class="action-cell">
-                        <button class="btn-small" onclick="openDealModal(${d.id})">Editar</button>
-                        <button class="btn-small danger" onclick="deleteDeal(${d.id})">Borrar</button>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        }
+        function renderDrafts() { document.getElementById('draftsTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center; color:#a3a3a3; padding:20px;">Sección lista para conectar.</td></tr>'; }
+        function renderDeals() { document.getElementById('dealsTableBody').innerHTML = '<tr><td colspan="4" style="text-align:center; color:#a3a3a3; padding:20px;">Sección lista para conectar.</td></tr>'; }
+        function openDraftModal() { document.getElementById('draftModalTitle').innerText = 'Nuevo Draft'; document.getElementById('draftModal').style.display = 'flex'; }
+        function closeDraftModal() { document.getElementById('draftModal').style.display = 'none'; }
+        function openDealModal() { document.getElementById('dealModal').style.display = 'flex'; }
+        function closeDealModal() { document.getElementById('dealModal').style.display = 'none'; }
     </script>
 </body>
 </html>
+
